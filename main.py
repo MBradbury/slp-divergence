@@ -105,36 +105,48 @@ print("Finished checking validity!")
 print("MAX H", dr.maxH())
 
 def h_table(name: str, Aname: str):
-    print(f"H({name})" + " ".join(f"{node+1:^4}" for node in dr.nodes))
-    for t in range(1, 16):
-        print(f"{t:^4}" + " ".join(
-            f"{h:.1f} " #if h != 0 else "    "
-            for node in dr.nodes
-            for h in [dr.H(Aname, t, start=node)]
-        ))
+    with open(f"graphs/H{name}.dat", "w") as f:
+        print(f"#H({name})" + " ".join(f"{node+1:^4}" for node in dr.nodes).rstrip(), file=f)
+        for t in range(1, 16):
+            print(f"{t:^4}" + " ".join(
+                f"{h:.1f} " #if h != 0 else "    "
+                for node in dr.nodes
+                for h in [dr.H(Aname, t, start=node)]
+            ).rstrip(), file=f)
+    with open(f"graphs/H{name}.dat", "r") as f:
+        for line in f:
+            print(line.strip())
 
 # Show the entropy for the two matrices
 h_table("N", "An")
 h_table("S", "As")
 
 def divergence_table(fnname: str, name: str, A1name: str, A2name: str):
-    print(f"{fnname}({name})" + " ".join(f"{node+1:^4}" for node in dr.nodes))
-    for t in range(1, 11):
-        print(f"{t:^9}" + " ".join(
-            f"{h:.1f} " #if h != 0 else "    "
-            for node in dr.nodes
-            for h in [dr.DJS(A1name, A2name, t, t, start=node)]
-        ))
-
-def divergence_3d_table(fnname: str, name: str, A1name: str, A2name: str):
-    print(f"{fnname}({name})" + " ".join(f"{node+1:^4}" for node in dr.nodes))
-    for t1 in range(1, 11):
-        for t2 in range(1, 11):
-            print(f"{t1:^4} {t2:^4}" + " ".join(
+    with open("graphs/JSD.dat", "w") as f:
+        print(f"#{fnname}({name})" + " ".join(f"{node+1:^4}" for node in dr.nodes).rstrip(), file=f)
+        for t in range(1, 11):
+            print(f"{t:^9}" + " ".join(
                 f"{h:.1f} " #if h != 0 else "    "
                 for node in dr.nodes
-                for h in [dr.DJS(A1name, A2name, t1, t2, start=node)]
-            ))
+                for h in [dr.DJS(A1name, A2name, t, t, start=node)]
+            ).rstrip(), file=f)
+    with open("graphs/JSD.dat", "r") as f:
+        for line in f:
+            print(line.strip())
+
+def divergence_3d_table(fnname: str, name: str, A1name: str, A2name: str):
+    with open("graphs/JSD3D.dat", "w") as f:
+        print(f"#{fnname}({name})" + " ".join(f"{node+1:^4}" for node in dr.nodes).rstrip(), file=f)
+        for t1 in range(1, 11):
+            for t2 in range(1, 11):
+                print(f"{t1:^4} {t2:^4}" + " ".join(
+                    f"{h:.1f} " #if h != 0 else "    "
+                    for node in dr.nodes
+                    for h in [dr.DJS(A1name, A2name, t1, t2, start=node)]
+                ).rstrip(), file=f)
+    with open("graphs/JSD3D.dat", "r") as f:
+        for line in f:
+            print(line.strip())
 
 # Create the Jensen-Shannon Divergence table for when the transition time is the same
 divergence_table("DJS", "S||N", "As", "An")
