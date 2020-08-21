@@ -40,7 +40,7 @@ class RoutingDivergenceMatrix(RoutingMatrix):
 
         # Calculate two different ways to validate
 
-        result1 = A[n] * (A ** (t1-1))[start, n[0]]
+        result1 = A[n] * np.linalg.matrix_power(A, (t1-1))[start, n[0]]
 
         paths = self.pathsWithPr(Aname, t1, source=start)
 

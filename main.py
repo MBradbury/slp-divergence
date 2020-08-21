@@ -3,14 +3,38 @@
 import numpy as np
 from pprint import pprint
 
-from routing import RoutingMatrix, tstr, tnorm
+from routing import RoutingMatrix, tstr, tnorm, AtoG
 from divergence import RoutingDivergenceMatrix
 import ppp
+
+import matplotlib.pyplot as plt
+import networkx as nx
+
+def drawrmat(R, name):
+    G = AtoG(R)
+
+    nx.draw_networkx(G, pos=node_coords)
+    nx.draw_networkx_edge_labels(G, pos=node_coords, edge_labels=nx.get_edge_attributes(G, 'weight'))
+
+    plt.savefig(f"{name}.pdf")
+    plt.clf()
 
 # Define the network structure
 
 # Set of all nodes
 nodes = {0, 1, 2, 3, 4, 5, 6, 7, 8}
+
+node_coords = {
+    0: (0, 0),
+    1: (1, 0),
+    2: (2, 0),
+    3: (0, 1),
+    4: (1, 1),
+    5: (2, 1),
+    6: (0, 2),
+    7: (1, 2),
+    8: (2, 2),
+}
 
 # Set of unidirectional edges between nodes
 edges = {
@@ -26,7 +50,7 @@ edges = {
 }
 
 # The protectionless routing matrix
-Rn = np.matrix([
+Rn = np.array([
     [0, 1, 0, 1, 0  , 0  , 0, 0  , 0  ],
     [0, 0, 1, 0, 0.5, 0  , 0, 0  , 0  ],
     [0, 0, 0, 0, 0  , 0.5, 0, 0  , 0  ],
@@ -38,8 +62,10 @@ Rn = np.matrix([
     [0, 0, 0, 0, 0  , 0  , 0, 0  , 0  ],
 ])
 
+drawrmat(Rn, "Rn")
+
 # The SLP routing matrix of interest
-Rs = np.matrix([
+Rs = np.array([
     [0, 0, 0, 1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -51,6 +77,8 @@ Rs = np.matrix([
     [0, 0, 0, 0, 0, 1, 0, 0, 0],
 ])
 
+drawrmat(Rs, "Rs")
+
 r = RoutingMatrix(nodes, edges, Rn, Rs)
 
 print("N Transitions:", list(map(tstr, r.trans("An"))))
@@ -58,9 +86,16 @@ print("S Transitions:", list(map(tstr, r.trans("As"))))
 
 source = 0
 
+# Generate set of properly perturbed paths
 p = ppp.getppp(r, source=source, sink=4, safety_period=4)
 print("Properly perturbed paths=")
 pprint(p)
+
+# Generate the SLP routing matrix from the set of ppps
+gRs = ppp.generateRs(r, source=source, sink=4, safety_period=4)
+print(gRs)
+drawrmat(gRs, "gRs")
+gr = RoutingDivergenceMatrix(nodes, edges, Rn, gRs)
 
 def ecaptab(routing, name, A, end):
     print(f"E[C({name})]")

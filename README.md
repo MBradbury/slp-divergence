@@ -5,7 +5,7 @@ This repository contains the scripts to generate graphs for the paper 'Quantifyi
 ## Setup
 
 ```bash
-python3 -m pip install numpy networkx methodtools more_itertools
+python3 -m pip install numpy networkx methodtools more_itertools matplotlib
 sudo apt-get install gnuplot-nox
 ```
 

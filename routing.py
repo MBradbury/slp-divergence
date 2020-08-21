@@ -5,17 +5,17 @@ import networkx as nx
 from methodtools import lru_cache
 from more_itertools import pairwise
 
-def Amat(R):
-    R = np.transpose(R)
+def Amat(R: np.array) -> np.array:
+    R = R.T.copy()
 
     # Need to add transitions that keep the attacker at a node if there are no outwards edges
     for row in range(R.shape[0]):
-        if R[row,:][0].sum() == 0:
+        if R[row,:].sum() == 0:
             R[row, row] = 1.0
     R.flags.writeable = False
     return R
 
-def AtoG(A):
+def AtoG(A: np.array) -> nx.DiGraph:
     nodes = list(range(A.shape[0]))
 
     G = nx.DiGraph()
@@ -34,7 +34,7 @@ def tstr(t):
     return str(tnorm(t))
 
 class RoutingMatrix:
-    def __init__(self, nodes: set, edges: list, Rn: np.matrix, Rs: np.matrix=None):
+    def __init__(self, nodes: set, edges: list, Rn: np.array, Rs: np.array=None):
         self.nodes = nodes
         self.edges = edges
 
@@ -47,7 +47,7 @@ class RoutingMatrix:
         self._check_rmat(Rn)
 
         self.Rn = Rn.copy()
-        self.An = Amat(Rn.copy())
+        self.An = Amat(Rn)
 
         self._check_amat(self.An)
 
@@ -55,7 +55,7 @@ class RoutingMatrix:
             self._check_rmat(Rs)
 
             self.Rs = Rs.copy()
-            self.As = Amat(Rs.copy())
+            self.As = Amat(Rs)
 
             self._check_amat(self.An)
 
@@ -126,7 +126,7 @@ class RoutingMatrix:
 
     ##########################################################
 
-    def hitting_probability(self, A: np.matrix, i: int, end: int) -> float:
+    def hitting_probability(self, A: np.array, i: int, end: int) -> float:
         nodes = list(range(A.shape[0]))
 
         if i == end:
@@ -138,7 +138,7 @@ class RoutingMatrix:
                 if i != j
             )
 
-    def expected_hitting_time(self, A: np.matrix, i: int, end: int) -> float:
+    def expected_hitting_time(self, A: np.array, i: int, end: int) -> float:
         if self.hitting_probability(A, i, end) < 1:
             return float("inf")
 
