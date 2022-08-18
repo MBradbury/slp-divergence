@@ -16,7 +16,7 @@ set yrange [0.5:10.5]
 set xtics 1
 set ytics 1
 
-set ylabel "N_{/Symbol l}"
+set ylabel "P_{/Symbol l}"
 set xlabel "S_{/Symbol m}"
 
 set view map

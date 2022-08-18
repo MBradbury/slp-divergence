@@ -13,7 +13,7 @@ set ytics font ',16'
 #set arrow from 1,6.339850002884625 to 15,6.339850002884625 nohead lc rgb 'blue' lw 3
 #set label "Maximum Entropy = 6.34" at 1.1,6.6
 
-set ylabel "H(N_{/Symbol l})"
+set ylabel "H(P_{/Symbol l})"
 set xlabel "{/Symbol l}"
 set output "HN.pdf"
 plot "HN.dat" using 1:2 with lp title "1" linewidth 3, \
@@ -40,7 +40,7 @@ plot "HS.dat" using 1:2 with lp title "1" linewidth 3, \
      "HS.dat" using 1:10 with lp title "9" linewidth 3
 
 set yrange [0:1]
-set ylabel "JSD(N_{/Symbol l} || S_{/Symbol l})"
+set ylabel "JSD(P_{/Symbol l} || S_{/Symbol l})"
 set xlabel "{/Symbol l}"
 set output "JSD.pdf"
 plot "JSD.dat" using 1:2 with lp title "1" linewidth 3, \
