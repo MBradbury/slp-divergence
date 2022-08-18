@@ -107,6 +107,23 @@ def ecaptab(routing, name, A, end):
 ecaptab(r, "N", "An", end=source)
 ecaptab(r, "S", "As", end=source)
 
+def ecappr(routing, name, A, end, max_safety):
+    print(f"E[CPr({name})]")
+    with open(f"graphs/ECPr{name}.dat", "w") as f:
+        print(f"#node safety pr", file=f)
+        for node in routing.nodes:
+            for safety in range(max_safety+1):
+                print(f"{node+1:^4} {safety:^4}" + " ".join(
+                    f"{h:.1f} "
+                    for h in [routing.Edelta(A, start=node, end=end, safety=safety)]
+                ).rstrip(), file=f)
+    with open(f"graphs/ECPr{name}.dat", "r") as f:
+        for line in f:
+            print(line.strip())
+
+ecappr(r, "N", "An", end=source, max_safety=14)
+ecappr(r, "S", "As", end=source, max_safety=14)
+
 
 dr = RoutingDivergenceMatrix(nodes, edges, Rn, Rs)
 
