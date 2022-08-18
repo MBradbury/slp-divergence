@@ -164,4 +164,29 @@ class RoutingMatrix:
 
         return self.expected_hitting_time(A, start, end)
 
+
+    @lru_cache(maxsize=None)
+    def Edelta(self, Aname: str, start: int, end: int, safety: int):
+        """The expected capture time when the attacker starts at `start` and ends at `end`"""
+        A = self.get(Aname)
+        nodes = list(range(A.shape[0]))
+
+        assert start in nodes
+        assert end in nodes
+        assert safety >= 0
+
+        if start == end:
+            return 1
+
+        elif start != end and safety == 0:
+            return 0
+
+        else:
+            return sum(
+                A[start, k] * self.Edelta(Aname, k, end, safety - 1)
+
+                for k in nodes
+                if k != start
+            )
+
     ##########################################################
